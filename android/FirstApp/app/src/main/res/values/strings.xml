@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FirstApp</string>
+    <string name="button_label">LEN</string>
+    <string name="insert">Insert something...</string>
+</resources>
