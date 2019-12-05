@@ -39,7 +39,7 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
         }
 
         holder.titleTV.setText(movie.getTitle());
-        holder.directorNameTV.setText(movie.getDirectorName());
+        holder.directorNameTV.setText(movie.getDirector());
 
         return convertView;
     }
