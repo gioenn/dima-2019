@@ -19,6 +19,7 @@ import it.polimi.deib.deepse.movies.R;
 import it.polimi.deib.deepse.movies.adapter.MovieArrayAdapter;
 import it.polimi.deib.deepse.movies.model.Movie;
 import it.polimi.deib.deepse.movies.remote.MovieRESTInterface;
+import it.polimi.deib.deepse.movies.service.MovieService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,8 +27,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MoviesActivity extends AppCompatActivity {
-
-    List<Movie> movies = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,42 +51,16 @@ public class MoviesActivity extends AppCompatActivity {
 
     private void retrieveMovies(){
 
-        final TypedArray movieIds =
-                getResources().obtainTypedArray(R.array.movies_imdb_ids);
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://www.omdbapi.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        MovieRESTInterface restInterface =
-                retrofit.create(MovieRESTInterface.class);
-
-        for (int i = 0; i < movieIds.length(); i++){
-            String id = movieIds.getString(i);
-
-            restInterface.getMovie(id, "b8c79639").enqueue(new Callback<Movie>() {
-                @Override
-                public void onResponse(Call<Movie> call, Response<Movie> response) {
-                    Movie movie = response.body();
-                    movies.add(movie);
-                    if (movies.size() == movieIds.length())
-                        setUpListView();
-                }
-
-                @Override
-                public void onFailure(Call<Movie> call, Throwable t) {
-                    System.out.println("ERROR");
-
-                }
-            });
-
-        }
-
+        MovieService.getInstance(this).getAllMovies(new MovieService.Callback() {
+            @Override
+            public void onLoad(List<Movie> movies) {
+                setUpListView(movies);
+            }
+        });
 
     }
 
-    private void setUpListView(){
+    private void setUpListView(List<Movie> movies){
         ListView listView = findViewById(R.id.movieList);
 
         MovieArrayAdapter arrayAdapter =

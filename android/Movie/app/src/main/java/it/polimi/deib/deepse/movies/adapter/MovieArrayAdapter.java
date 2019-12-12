@@ -40,7 +40,7 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
 
         holder.titleTV.setText(movie.getTitle());
         holder.directorNameTV.setText(movie.getDirector());
-
+        holder.userRatingTV.setText(String.valueOf(movie.getUserRating()));
         return convertView;
     }
 
@@ -48,10 +48,13 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
 
         TextView titleTV;
         TextView directorNameTV;
+        TextView userRatingTV;
 
         public MovieViewHolder(View view){
             this.titleTV = view.findViewById(R.id.movieTitleTV);
             this.directorNameTV = view.findViewById(R.id.directorNameTV);
+            this.userRatingTV = view.findViewById(R.id.userRatingTV);
+
         }
 
     }

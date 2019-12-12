@@ -28,12 +28,12 @@ public class MovieDBRepository {
                 new Object[]{movie.getImdbId()});
     }
 
-    public Cursor findAll(){
+    public MovieCursor findAll(){
         Cursor res = db.rawQuery("SELECT * FROM "+MovieEntry.TABLE_NAME, null);
         return new MovieCursor(res);
     }
 
-    public Cursor findById(String movieId){
+    public MovieCursor findById(String movieId){
         Cursor res = db.rawQuery("SELECT * FROM "+MovieEntry.TABLE_NAME+
                 " WHERE "+MovieEntry._ID+" = ?", new String[]{movieId});
         return new MovieCursor(res);

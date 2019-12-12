@@ -3,12 +3,17 @@ package it.polimi.deib.deepse.movies.service;
 import android.content.Context;
 import android.content.res.TypedArray;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.polimi.deib.deepse.movies.R;
+import it.polimi.deib.deepse.movies.data.MovieCursor;
 import it.polimi.deib.deepse.movies.data.MovieDBRepository;
 import it.polimi.deib.deepse.movies.model.Movie;
 import it.polimi.deib.deepse.movies.remote.MovieRESTInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -38,7 +43,32 @@ public class MovieService {
     }
 
     public void getAllMovies(final Callback callback){
+        MovieCursor cursor = repository.findAll();
+        final int count = cursor.getCount();
+        final List<Movie> movies = new ArrayList<>();
+        while (cursor.moveToNext()){
+            final String imdbId = cursor.getImdbId();
+            final String userReview = cursor.getUserReview();
+            final float userRating = cursor.getUserRating();
+            restInterface.getMovie(imdbId, "b8c79639").enqueue(new retrofit2.Callback<Movie>() {
+                @Override
+                public void onResponse(Call<Movie> call, Response<Movie> response) {
+                    Movie movie = response.body();
+                    movie.setUserRating(userRating);
+                    movie.setUserReview(userReview);
 
+                    movies.add(movie);
+                    if (movies.size() == count){
+                        callback.onLoad(movies);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Movie> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
     public void fillWithDefault(Context context){
@@ -61,7 +91,7 @@ public class MovieService {
     }
 
     public static interface Callback {
-        public void onLoad(List<Movie> movies);
+        void onLoad(List<Movie> movies);
     }
 
 }
